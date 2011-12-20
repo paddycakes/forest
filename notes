@@ -1,0 +1,5 @@
+
+* Event: equals, hashCode & toString. Comparable by date?
+* Event: Log warning if there are more unused parameters?
+* Event: Handle missing event parameter.
+* Event: Rename 'variable' to 'key'?
