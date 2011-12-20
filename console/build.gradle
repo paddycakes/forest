@@ -1,0 +1,9 @@
+apply plugin:'application'
+
+mainClassName = "forest.console.Console"
+
+archivesBaseName = 'forest-console'
+
+dependencies {
+	compile 'com.baulsupp.kolja:jcurses:0.9.5.3'
+}
