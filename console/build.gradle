@@ -5,5 +5,6 @@ mainClassName = "forest.console.Console"
 archivesBaseName = 'forest-console'
 
 dependencies {
-	compile 'com.baulsupp.kolja:jcurses:0.9.5.3'
+	compile project(':core')
+	compile files(fileTree(dir: 'lib', includes: ['*.jar']))
 }

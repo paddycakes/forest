@@ -1,1 +1,1 @@
-include 'core', 'console'
+include 'core', 'console', 'log4j'

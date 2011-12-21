@@ -14,10 +14,14 @@ import forest.storage.Store;
 
 public class EventLogger implements Logger {
 
+	public static final String LOG_NAME = "__logName";
 	public static final String LOG_LEVEL = "__logLevel";
+	
 	private final Store store;
+	private final String name;
 
-	public EventLogger(Store store) {
+	public EventLogger(String name, Store store) {
+		this.name = name;
 		this.store = store;
 	}
 
@@ -48,12 +52,13 @@ public class EventLogger implements Logger {
 
 
 	private void log(LogLevel level, String message, Object... parameters) {
-		store.put(new Event(message, parameters, logLevel(level)));
+		store.put(new Event(message, parameters, loggerParams(level)));
 	}
 	
-	private Map<String, Object> logLevel(LogLevel value) {
+	private Map<String, Object> loggerParams(LogLevel value) {
 		HashMap<String, Object> map = new HashMap<String, Object>();
 		map.put(LOG_LEVEL, value);
+		map.put(LOG_NAME, name);
 		return map;
 	}
 

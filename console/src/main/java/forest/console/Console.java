@@ -4,7 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.io.PrintWriter;
+
+import enigma.core.Enigma;
 
 public class Console {
 	
@@ -13,14 +14,16 @@ public class Console {
 	private static final String CLEAR = ESC + "[2J";
 	private static final String BLUE_BACKGROUND = ESC + "44m";
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, InterruptedException {
+		Enigma.getConsole();
+		
 		PrintStream out = new PrintStream(System.out, true, "UTF-8");
 		out.print(RESET + BLUE_BACKGROUND);
 		out.print(CLEAR + "\n\n\n\nHello World!");
 		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		String input = null;
 		while (!(input = in.readLine()).trim().equals("quit")) {
-			out.println(input);
+			//out.println(input);
 		}
 		out.print(RESET);
 		

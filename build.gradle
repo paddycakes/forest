@@ -1,6 +1,8 @@
 allprojects {
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
+	
+	tasks.eclipse.dependsOn cleanEclipse
 }
 
 subprojects {
@@ -8,6 +10,8 @@ subprojects {
 	sourceCompatibility = '1.6'
 	group = 'forest'
 	version = '0.1'
+
+	eclipse.project.name = "forest-${eclipse.project.name}"
 
 	repositories {
 		mavenCentral()
@@ -22,5 +26,7 @@ subprojects {
 		testCompile 'junit:junit:4.10'
 		testCompile 'org.mockito:mockito-all:1.8.5'
 	}
-
+	
 }
+
+eclipse.project.name = "${eclipse.project.name}-parent"

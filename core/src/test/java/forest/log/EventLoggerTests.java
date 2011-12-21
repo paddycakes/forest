@@ -1,6 +1,7 @@
 package forest.log;
 
 import static forest.log.EventLogger.LOG_LEVEL;
+import static forest.log.EventLogger.LOG_NAME;
 import static forest.log.LogLevel.*;
 import static org.joda.time.DateTimeUtils.setCurrentMillisFixed;
 import static org.joda.time.DateTimeUtils.setCurrentMillisSystem;
@@ -25,11 +26,12 @@ public class EventLoggerTests {
 	
 	private EventLogger log;
 	private Store store;
+	private String name = "my.logger";
 	
 	@Before
 	public void setUp() {
 		store = new InMemoryStore();
-		log = new EventLogger(store);
+		log = new EventLogger(name, store);
 	}
 	
 	@After
@@ -79,6 +81,13 @@ public class EventLoggerTests {
 		
 		log.info("Loggin'...");
 		assertEquals(now, store.events().next().getTime());
+	}
+	
+	@Test
+	public void logSetsCategoryOnEvent() {
+		log.info("Biffed $thingyId", 503);
+		
+		assertEquals(name, store.events().next().getParameter(LOG_NAME));
 	}
 	
 	@Test
