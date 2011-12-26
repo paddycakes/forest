@@ -1,8 +1,22 @@
+import groovy.util.Node
+
+project.setProperty('eclipseFilterId', 2324432885259)
+
 allprojects {
 	apply plugin: 'java'
 	apply plugin: 'eclipse'
-	
+
 	tasks.eclipse.dependsOn cleanEclipse
+	
+	eclipse {
+		project {
+			file {
+				withXml { xml ->
+					addEclipseProjectFilters xml, ['build']
+				}
+			}
+		}
+	}
 }
 
 subprojects {
@@ -10,8 +24,10 @@ subprojects {
 	sourceCompatibility = '1.6'
 	group = 'forest'
 	version = '0.1'
+	
+	archivesBaseName = "${rootProject.name}-${archivesBaseName}"
 
-	eclipse.project.name = "forest-${eclipse.project.name}"
+	eclipse.project.name = "${rootProject.name}-${eclipse.project.name}"
 
 	repositories {
 		mavenCentral()
@@ -22,11 +38,35 @@ subprojects {
 	}
 
 	dependencies {
+		compile 'log4j:log4j:1.2.16'
 		compile 'joda-time:joda-time:1.6.2'
 		testCompile 'junit:junit:4.10'
 		testCompile 'org.mockito:mockito-all:1.8.5'
 	}
-	
 }
 
-eclipse.project.name = "${eclipse.project.name}-parent"
+eclipse {
+	project {
+		name = "${eclipse.project.name}-parent"
+		file {
+			withXml { xml ->
+				addEclipseProjectFilters xml, subprojects.collect{ it.name }
+			}
+		}
+	}
+}
+
+def addEclipseProjectFilters(xml, filterNames) {
+	def root = xml.asNode()
+	def filteredResources = new Node(root, 'filteredResources')
+	filterNames.each{ name ->
+		def filter = new Node(filteredResources, 'filter')
+		filter.appendNode('id', rootProject.properties.eclipseFilterId)
+		rootProject.setProperty('eclipseFilterId', project.properties.eclipseFilterId + 1)
+		filter.appendNode('name')
+		filter.appendNode('type', '14')
+		def matcher = new Node(filter, 'matcher')
+		matcher.appendNode('id', 'org.eclipse.ui.ide.multiFilter')
+		matcher.appendNode('arguments', "1.0-name-matches-true-false-${name}")
+	}
+}

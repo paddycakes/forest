@@ -2,8 +2,6 @@ apply plugin:'application'
 
 mainClassName = "forest.console.Console"
 
-archivesBaseName = 'forest-console'
-
 dependencies {
 	compile project(':core')
 	compile files(fileTree(dir: 'lib', includes: ['*.jar']))

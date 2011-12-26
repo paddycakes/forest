@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import enigma.core.Enigma;
 
 public class Console {
 	
@@ -15,8 +14,6 @@ public class Console {
 	private static final String BLUE_BACKGROUND = ESC + "44m";
 	
 	public static void main(String[] args) throws IOException, InterruptedException {
-		Enigma.getConsole();
-		
 		PrintStream out = new PrintStream(System.out, true, "UTF-8");
 		out.print(RESET + BLUE_BACKGROUND);
 		out.print(CLEAR + "\n\n\n\nHello World!");

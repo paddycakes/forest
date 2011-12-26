@@ -7,6 +7,7 @@
 	<classpathentry kind="src" path="src/test/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
 	<classpathentry kind="src" path="/forest-core" exported="true"/>
+	<classpathentry sourcepath="/Users/martin/.gradle/caches/artifacts-4/log4j/log4j/c12498cf18507aa6433a94eb7d3e77d5/sources/log4j-1.2.16-sources.jar" kind="lib" path="/Users/martin/.gradle/caches/artifacts-4/log4j/log4j/c12498cf18507aa6433a94eb7d3e77d5/bundles/log4j-1.2.16.jar" exported="true"/>
 	<classpathentry sourcepath="/Users/martin/.gradle/caches/artifacts-4/joda-time/joda-time/c12498cf18507aa6433a94eb7d3e77d5/sources/joda-time-1.6.2-sources.jar" kind="lib" path="/Users/martin/.gradle/caches/artifacts-4/joda-time/joda-time/c12498cf18507aa6433a94eb7d3e77d5/jars/joda-time-1.6.2.jar" exported="true"/>
 	<classpathentry sourcepath="/Users/martin/.gradle/caches/artifacts-4/junit/junit/c12498cf18507aa6433a94eb7d3e77d5/sources/junit-4.10-sources.jar" kind="lib" path="/Users/martin/.gradle/caches/artifacts-4/junit/junit/c12498cf18507aa6433a94eb7d3e77d5/jars/junit-4.10.jar" exported="true"/>
 	<classpathentry sourcepath="/Users/martin/.gradle/caches/artifacts-4/org.mockito/mockito-all/c12498cf18507aa6433a94eb7d3e77d5/sources/mockito-all-1.8.5-sources.jar" kind="lib" path="/Users/martin/.gradle/caches/artifacts-4/org.mockito/mockito-all/c12498cf18507aa6433a94eb7d3e77d5/jars/mockito-all-1.8.5.jar" exported="true"/>

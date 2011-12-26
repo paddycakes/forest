@@ -1,0 +1,18 @@
+apply plugin: 'application'
+
+// installApp.destinationDir = new File("${project.buildDir}/install/${rootProject.name}-${project.name}")
+// startScripts.applicationName = "${rootProject.name}-${project.name}"
+
+if (project.properties.args) {
+	tasks.run.args = project.properties.args.tokenize()
+}
+
+mainClassName = "forest.webconsole.WebConsole"
+
+dependencies {
+	compile project(':core')
+	compile project(':log4j')
+	compile 'org.jboss.netty:netty:3.2.7.Final'
+	compile 'commons-cli:commons-cli:1.2'
+	compile 'commons-io:commons-io:2.1'
+}

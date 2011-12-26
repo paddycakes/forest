@@ -1,8 +1,15 @@
 package forest.log;
 
-import static forest.log.EventLogger.LOG_LEVEL;
-import static forest.log.EventLogger.LOG_NAME;
-import static forest.log.LogLevel.*;
+import static forest.log.EventLogger.LoggerParams.LOG_LEVEL;
+import static forest.log.EventLogger.LoggerParams.LOG_NAME;
+import static forest.log.EventLogger.LoggerParams.THREAD_NAME;
+import static forest.log.EventLogger.LoggerParams.THROWABLE;
+import static forest.log.LogLevel.DEBUG;
+import static forest.log.LogLevel.ERROR;
+import static forest.log.LogLevel.FATAL;
+import static forest.log.LogLevel.INFO;
+import static forest.log.LogLevel.WARN;
+import static forest.query.Queries.between;
 import static org.joda.time.DateTimeUtils.setCurrentMillisFixed;
 import static org.joda.time.DateTimeUtils.setCurrentMillisSystem;
 import static org.junit.Assert.assertEquals;
@@ -17,20 +24,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 import forest.event.Event;
-import forest.storage.InMemoryStore;
-import forest.storage.Store;
+import forest.storage.EventStore;
+import forest.storage.SerializingEventsListStore;
 
 public class EventLoggerTests {
 	
-	private static final DateTime now = new DateTime();
+	private static final DateTime start = new DateTime();
 	
 	private EventLogger log;
-	private Store store;
+	private EventStore store;
 	private String name = "my.logger";
 	
 	@Before
 	public void setUp() {
-		store = new InMemoryStore();
+		store = new SerializingEventsListStore();
 		log = new EventLogger(name, store);
 	}
 	
@@ -44,17 +51,21 @@ public class EventLoggerTests {
 		log.info("One");
 		log.info("Two");
 		
-		Iterator<Event> events = store.events();
+		Iterator<Event> events = allEvents();
 		assertEquals("One", events.next().getMessage());
 		assertEquals("Two", events.next().getMessage());
 		assertFalse(events.hasNext());
+	}
+
+	private Iterator<Event> allEvents() {
+		return store.events(between(start.minusMinutes(10), start.plusMinutes(10))).iterator();
 	}
 	
 	@Test
 	public void logParameterIsSubstitutedIntoEventMessage() {
 		log.info("Saving thingy $thingyId and happy about it.", 301);
 		
-		assertEquals("Saving thingy 301 and happy about it.", store.events().next().getMessage());
+		assertEquals("Saving thingy 301 and happy about it.", allEvents().next().getMessage());
 	}
 	
 	@Test
@@ -62,7 +73,7 @@ public class EventLoggerTests {
 		log.info("Biffed $thingyId", 503);
 		log.info("Bazooed $widget", "one");
 		
-		Iterator<Event> events = store.events();
+		Iterator<Event> events = allEvents();
 		assertEquals(503, events.next().getParameter("thingyId"));
 		assertEquals("one", events.next().getParameter("widget"));
 	}
@@ -71,23 +82,38 @@ public class EventLoggerTests {
 	public void logEventReturnsNullForUnknownParameter() {
 		log.info("Biffed $thingyId", 503);
 		
-		Iterator<Event> events = store.events();
+		Iterator<Event> events = allEvents();
 		assertNull(events.next().getParameter("unknown"));
 	}
 	
 	@Test
 	public void logSetsTimestampOnEvent() {
-		fixTimeTo(now);
+		fixTimeTo(start);
 		
 		log.info("Loggin'...");
-		assertEquals(now, store.events().next().getTime());
+		assertEquals(start, allEvents().next().getTime());
 	}
 	
 	@Test
 	public void logSetsCategoryOnEvent() {
 		log.info("Biffed $thingyId", 503);
 		
-		assertEquals(name, store.events().next().getParameter(LOG_NAME));
+		assertEquals(name, allEvents().next().getParameter(LOG_NAME));
+	}
+	
+	@Test
+	public void logSetsThrowableOnEvent() {
+		RuntimeException exception = new RuntimeException("Doh!");
+		log.info("Ooops", exception);
+		
+		assertEquals(exception, allEvents().next().getParameter(THROWABLE));
+	}
+	
+	@Test
+	public void logSetsThreadNameOnEvent() {
+		log.info("Hiya!");
+		
+		assertEquals(Thread.currentThread().getName(), allEvents().next().getParameter(THREAD_NAME));
 	}
 	
 	@Test
@@ -98,7 +124,7 @@ public class EventLoggerTests {
 		log.error("Error");
 		log.fatal("Fatal");
 		
-		Iterator<Event> events = store.events();
+		Iterator<Event> events = allEvents();
 		assertNextEventIs(DEBUG, "Debug", events);
 		assertNextEventIs(INFO, "Info", events);
 		assertNextEventIs(WARN, "Warn", events);

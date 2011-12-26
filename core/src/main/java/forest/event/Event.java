@@ -1,5 +1,6 @@
 package forest.event;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -7,29 +8,34 @@ import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 
-public class Event {
+public class Event implements Serializable {
 	
+	private static final long serialVersionUID = 1L;
+
 	private static final Pattern variablePattern = Pattern.compile("\\$\\w+");
 	
 	private final DateTime time = new DateTime();
-	private final String message;
+	private String message;
 	private Map<String, Object> parameters;
+	
+	public Event() {
+	}
 	
 	public Event(String message, Object[] parameters, Map<String, Object> additionalParameters) {
 		this.parameters = additionalParameters != null 
 				? new HashMap<String, Object>(additionalParameters) 
 				: new HashMap<String, Object>();
-		String substituedMessage = message;
+		String substitutedMessage = message;
 		if (parameters.length > 0) {
 			Matcher matcher = variablePattern.matcher(message);
 			for (int i = 0; matcher.find(); i++) {
 				String variable = matcher.group();
 				Object value = parameters[i];
 				this.parameters.put(variable.substring(1), value); // variable.substring(1) removes the $
-				substituedMessage = substituedMessage.replace(variable, value.toString());
+				substitutedMessage = substitutedMessage.replace(variable, value.toString());
 			}
 		}
-		this.message = substituedMessage;
+		this.message = substitutedMessage;
 	}
 
 	public Event(String message, Object... parameters) {
@@ -40,8 +46,9 @@ public class Event {
 		return message;
 	}
 	
-	public Object getParameter(String variable) {
-		return parameters.get(variable);
+	@SuppressWarnings("unchecked")
+	public <T> T getParameter(String variable) {
+		return (T) parameters.get(variable);
 	}
 
 	public DateTime getTime() {

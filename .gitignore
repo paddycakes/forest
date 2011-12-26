@@ -2,4 +2,5 @@ bin
 build
 .git
 .gradle
+out
 tmp

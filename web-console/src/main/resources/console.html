@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+  <script type="application/javascript" src="/js/jquery-1.7.1.min.js"></script>
+  <script type="application/javascript" src="/js/keymaster.js"></script>
+  <link rel="stylesheet" media="screen" href="/css/bootstrap.min.css" type="text/css" charset="UTF-8"></link>
+  <link rel="stylesheet" media="screen" href="/css/console.css" type="text/css" charset="UTF-8"></link>
+</head>
+<body>
+  <h1>Forest Web Console</h1>
+  <form id="search" method="get" action="/data" autocomplete="off">
+    <input type="text" name="q" id="q" class="span2" placeholder="Search"/>
+    <button class="btn" type="submit">Go</button>
+  </form>
+  <div id="console"><ul></ul></div>
+  <script type="application/javascript">
+  <![CDATA[
+    var tailIntervalId = null;
+  	$(document).ready(function() {
+		loadLatest();
+		$('#q').focus(function() {
+			$(this).animate({ width: '330px' });
+		});
+		$('#q').blur(function() {
+			$(this).val('').animate({ width: '90px' });
+		});
+		$('form#search').submit(function(event) {
+			event.preventDefault();
+			var params = $(this).serialize();
+			console.log('Submitting search form with parameters: ' + params);
+			loadLatest(params);
+		});
+  	});
+
+	function loadLatest(params) {
+		jQuery.ajax({
+			url: "/data",
+			data: params,
+			success: function(data) {
+				var allItems = $(data);
+				var numConsoleLines = 20;
+				var items = [];
+				for (var i = (allItems.length - numConsoleLines); i < allItems.length; i++) {
+					items.push(allItems[i]);
+				}
+				$("#console ul").html(items);
+			}
+		});
+		return false;
+	}
+	
+	function startTail() {
+		if (tailIntervalId != null) {
+			console.log("Tail is already running.");
+		} else {
+    		tailIntervalId = setInterval(function() {
+    			loadLatest()
+    		}, 500);
+    		console.log("Started tail (interval id " + tailIntervalId + ").");
+		}
+		return false;
+	}
+	
+	function stopTail() {
+		if (tailIntervalId == null) {
+			console.log("Tail is not running.");
+		} else {
+			clearInterval(tailIntervalId);
+			tailIntervalId = null;
+			console.log("Stopped tail.")
+		}
+		return false;
+	}
+	
+	function openSearch() {
+		$('#q').focus();
+		console.log("Opened search.");
+		return false;
+  	}
+	
+	function closeSearch() {
+		$('#q').blur();
+		console.log("Closed search.");
+		return false;
+	}
+	
+	key('/', openSearch);
+  	key('esc', 'input', closeSearch);
+  	key('shift+f', startTail);
+  	key('ctrl+c', stopTail);
+  	
+  ]]>
+  </script>
+</body>
+</html>

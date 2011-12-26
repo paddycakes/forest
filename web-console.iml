@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$/web-console">
+      <sourceFolder url="file://$MODULE_DIR$/web-console/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/web-console/src/main/resources" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/web-console/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/web-console/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/web-console/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/web-console/build" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="core" exported="" />
+    <orderEntry type="module" module-name="log4j" exported="" />
+    <orderEntry type="library" scope="TEST" name="mockito-all-1.8.5" level="project" />
+    <orderEntry type="library" scope="TEST" name="hamcrest-core-1.1" level="project" />
+    <orderEntry type="library" exported="" name="log4j-1.2.16" level="project" />
+    <orderEntry type="library" exported="" name="commons-io-2.1" level="project" />
+    <orderEntry type="library" exported="" name="netty-3.2.7.Final" level="project" />
+    <orderEntry type="library" scope="TEST" name="junit-4.10" level="project" />
+    <orderEntry type="library" exported="" name="joda-time-1.6.2" level="project" />
+    <orderEntry type="library" exported="" name="commons-cli-1.2" level="project" />
+  </component>
+</module>
+
