@@ -1,5 +1,8 @@
 package forest.query;
 
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+
 
 public class Token {
 	
@@ -33,6 +36,14 @@ public class Token {
 	
 	public int getIntValue() {
 		return (Integer) value;
+	}
+
+	public LocalDate getLocalDateValue() {
+		return (LocalDate) value;
+	}
+
+	public LocalTime getLocalTimeValue() {
+		return (LocalTime) value;
 	}
 	
 	@Override

@@ -4,7 +4,6 @@
 * Event: Handle missing event parameter.
 * Event: Rename 'variable' to 'key'?
 * Event: User long timestamp for time?
-* Event: Should getParameter return object or be typed?
 * EventLogger: Where should LOG_LEVEL and LOG_NAME constants live - EventLogger? Event?
 
 * ForestRequestHandler: Set cache headers for resource files.

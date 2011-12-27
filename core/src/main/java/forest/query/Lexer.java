@@ -1,10 +1,21 @@
 package forest.query;
 
 import static forest.query.StringReader.isEOF;
-
-import java.lang.Character;
-
-import static forest.query.TokenType.*;
+import static forest.query.TokenType.AND;
+import static forest.query.TokenType.ARROW;
+import static forest.query.TokenType.COLON;
+import static forest.query.TokenType.DASH;
+import static forest.query.TokenType.DATE;
+import static forest.query.TokenType.DOUBLE;
+import static forest.query.TokenType.EOF;
+import static forest.query.TokenType.EQUAL;
+import static forest.query.TokenType.INTEGER;
+import static forest.query.TokenType.NAME;
+import static forest.query.TokenType.NOT_EQUAL;
+import static forest.query.TokenType.OR;
+import static forest.query.TokenType.STRING;
+import static forest.query.TokenType.TIME;
+import static forest.query.TokenType.WHITE_SPACE;
 import static java.lang.Character.isDigit;
 import static java.lang.Character.isJavaIdentifierStart;
 import static java.lang.Character.isWhitespace;
@@ -12,8 +23,14 @@ import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 import static java.lang.String.format;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 public class Lexer {
 
+	private static final DateTimeFormatter DATE_PARSER = DateTimeFormat.forPattern("d/M/yy");
+	private static final DateTimeFormatter TIME_PARSER = ISODateTimeFormat.localTimeParser();
 	private final StringReader text;
 
 	public Lexer(String text) {
@@ -25,16 +42,16 @@ public class Lexer {
 		if (isWhitespace(c)) return whiteSpace();
 		if (isEOF(c)) return eof();
 		if (isNameStartChar(c)) return name();
-		if (isDigit(c)) return number();
+		if (isDigit(c)) return numberDateOrTime();
 		if (isStringQuote(c)) return string();
 		switch (c) {
 		case '=': return equals();
 		case '!': return notEqual();
 		case ':': return colon();
-        case '-': return arrow();
+        case '-': return dashOrArrow();
 		case '&': return and();
 		case '|': return or();
-		default: throw new LexerException("Unable to process char: " + c);
+		default: throw new LexerException("Unexpected character: " + c);
 		}
 	}
 	
@@ -62,15 +79,23 @@ public class Lexer {
 		else return new Token(NAME, n);
 	}
 
-	private Token number() {
+	private Token numberDateOrTime() {
 		char c = text.current();
 		StringBuilder number = new StringBuilder();
 		number.append(c);
-		while (isNumberChar(text.lookAhead())) {
+		while (!isEOF(c = text.lookAhead()) && (isDigit(c) || c == '.' || c == '/' || c == ':')) {
 			number.append(text.advance());
 		}
 		String n = number.toString();
-		return n.contains(".") ?  new Token(DOUBLE, parseDouble(n)) : new Token(INTEGER, parseInt(n));
+		if (n.contains("/")) {
+			return new Token(DATE, DATE_PARSER.parseDateTime(n).toLocalDate());
+		} else if (n.contains(":")) {
+			return new Token(TIME, TIME_PARSER.parseDateTime(n).toLocalTime());
+		} else if (n.contains(".")) {
+			return new Token(DOUBLE, parseDouble(n));
+		} else {
+			return new Token(INTEGER, parseInt(n));
+		}
 	}
 
 	private Token string() {
@@ -97,9 +122,13 @@ public class Lexer {
 		return new Token(COLON);
 	}
 
-    private Token arrow() {
-        expect('>');
-        return new Token(ARROW);
+    private Token dashOrArrow() {
+    	if (text.lookAhead() == '>') {
+    		text.advance();
+    		return new Token(ARROW);
+    	} else {
+    		return new Token(DASH);
+    	}
     }
 
 	private Token and() {
@@ -124,16 +153,17 @@ public class Lexer {
 		return c == '\'' || c == '"';
 	}
 
-	private boolean isNumberChar(char c) {
-		return !isEOF(c) && (isDigit(c) || c == '.');
-	}
-
     /* --- Other helpers --- */
 
     private void expect(char c) throws LexerException {
         if (text.advance() != c) {
             throw new LexerException(format("Expected %s, but found %s", c, text.current()));
         }
+    }
+    
+    @Override
+    public String toString() {
+    	return new StringBuilder("[Lexer: ").append(text.toString()).append("]").toString();
     }
 
 }

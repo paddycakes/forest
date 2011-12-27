@@ -3,11 +3,11 @@ package forest.query;
 
 public interface QueryVisitor {
 
-	void visit(PropertyEqualsQuery query);
+	void visit(ParameterQuery query);
 
-	void visit(TimeBetweenQuery query);
+	void visit(TimeQuery query);
 
-	void visit(CompositeQuery query);
+	void visit(AndQuery query);
 
 	void visit(OrQuery qery);
 	

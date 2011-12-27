@@ -1,9 +1,25 @@
 package forest.query;
 
-import static forest.query.TokenType.*;
+import static forest.query.TokenType.AND;
+import static forest.query.TokenType.ARROW;
+import static forest.query.TokenType.COLON;
+import static forest.query.TokenType.DASH;
+import static forest.query.TokenType.DATE;
+import static forest.query.TokenType.DOUBLE;
+import static forest.query.TokenType.EOF;
+import static forest.query.TokenType.EQUAL;
+import static forest.query.TokenType.INTEGER;
+import static forest.query.TokenType.NAME;
+import static forest.query.TokenType.NOT_EQUAL;
+import static forest.query.TokenType.OR;
+import static forest.query.TokenType.STRING;
+import static forest.query.TokenType.TIME;
+import static forest.query.TokenType.WHITE_SPACE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.After;
 import org.junit.Test;
 
@@ -62,6 +78,26 @@ public class LexerTests {
 	}
 	
 	@Test
+	public void date() {
+		lexer = new Lexer("25/12/2011");
+		assertNextTokenMatches(DATE, new LocalDate(2011, 12, 25));
+	}
+	
+	@Test
+	public void time() {
+		lexer = new Lexer("14:23:08.482");
+		assertNextTokenMatches(TIME, new LocalTime(14, 23, 8, 482));
+	}
+	
+	@Test
+	public void dateTime() {
+		lexer = new Lexer("2/1/2012-8:07");
+		assertNextTokenMatches(DATE, new LocalDate(2012, 1, 2));
+		assertNextTokenMatches(DASH);
+		assertNextTokenMatches(TIME, new LocalTime(8, 7, 0, 0));
+	}
+	
+	@Test
 	public void and() {
 		lexer = new Lexer("and");
 		assertNextTokenMatches(AND);
@@ -89,6 +125,12 @@ public class LexerTests {
 	public void colon() {
 		lexer = new Lexer(":");
 		assertNextTokenMatches(COLON);		
+	}
+	
+	@Test
+	public void dash() {
+		lexer = new Lexer("-");
+		assertNextTokenMatches(DASH);		
 	}
 
     @Test
@@ -130,6 +172,18 @@ public class LexerTests {
 		assertNextTokenMatches(NOT_EQUAL);
 		assertWhiteSpace();
 		assertNextTokenMatches(STRING, "blah");
+	}
+	
+	@Test
+	public void toStringShowsReaderPosition() {
+		lexer = new Lexer("param:widgetId=12");
+		lexer.nextToken();
+		lexer.nextToken();
+		
+		assertEquals("[Lexer: \"param[:]widgetId=12\"EOF]", lexer.toString());
+		lexer.nextToken();
+		lexer.nextToken();
+		lexer.nextToken();
 	}
 	
 	

@@ -46,9 +46,8 @@ public class Event implements Serializable {
 		return message;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public <T> T getParameter(String variable) {
-		return (T) parameters.get(variable);
+	public Object getParameter(String variable) {
+		return parameters.get(variable);
 	}
 
 	public DateTime getTime() {

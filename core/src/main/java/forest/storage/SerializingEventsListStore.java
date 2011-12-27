@@ -4,9 +4,6 @@ import static java.util.Collections.synchronizedList;
 import static java.util.Collections.unmodifiableList;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -38,7 +35,7 @@ public class SerializingEventsListStore implements EventStore {
 	public void put(Event event) {
 		events.add(event);
 		notifyEventListeners(event);
-		save();
+//		save();
 	}
 
 	private Iterator<Event> allEvents() {
@@ -77,25 +74,25 @@ public class SerializingEventsListStore implements EventStore {
 		}
 	}
 
-	private void save() {
-		if (file == null) return;
-		
-		FileOutputStream fileOutputStream = null;
-		ObjectOutputStream objectOutputStream = null;
-		try {
-			fileOutputStream = new FileOutputStream(file);
-			objectOutputStream = new ObjectOutputStream(fileOutputStream);
-			objectOutputStream.writeObject(events);
-		} catch (IOException e) {
-			log.error("Error saving events:", e);
-		} finally {
-			try {
-				if (fileOutputStream != null) fileOutputStream.close();
-				if (objectOutputStream != null) objectOutputStream.close();
-			} catch (IOException e) {
-				log.error("Error closing output streams while saving events:", e);
-			}
-		}
-	}
+//	private void save() {
+//		if (file == null) return;
+//		
+//		FileOutputStream fileOutputStream = null;
+//		ObjectOutputStream objectOutputStream = null;
+//		try {
+//			fileOutputStream = new FileOutputStream(file);
+//			objectOutputStream = new ObjectOutputStream(fileOutputStream);
+//			objectOutputStream.writeObject(events);
+//		} catch (IOException e) {
+//			log.error("Error saving events:", e);
+//		} finally {
+//			try {
+//				if (fileOutputStream != null) fileOutputStream.close();
+//				if (objectOutputStream != null) objectOutputStream.close();
+//			} catch (IOException e) {
+//				log.error("Error closing output streams while saving events:", e);
+//			}
+//		}
+//	}
 
 }

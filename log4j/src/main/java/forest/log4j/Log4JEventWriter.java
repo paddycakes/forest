@@ -36,7 +36,7 @@ public class Log4JEventWriter implements EventWriter {
 	public static LoggingEvent buildLog4jEvent(Event event) {
 		Logger logger = Logger.getLogger(event.getParameter(LOG_NAME).toString());
 		Level log4JLevel = getLevel(event);
-		Throwable throwable = event.getParameter(THROWABLE);
+		Throwable throwable = (Throwable) event.getParameter(THROWABLE);
 		return new LoggingEvent(FQCN, logger, event.getTime().getMillis(),
 				log4JLevel, event.getMessage(), (String) event.getParameter(THREAD_NAME),
 				new ThrowableInformation(throwable, logger), null, null, null);

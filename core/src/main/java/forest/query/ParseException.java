@@ -2,7 +2,9 @@ package forest.query;
 
 public class ParseException extends RuntimeException {
     
-    public ParseException(String message) {
+	private static final long serialVersionUID = 1L;
+
+	public ParseException(String message) {
         super(message);
     }
     

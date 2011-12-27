@@ -23,7 +23,7 @@
 			$(this).animate({ width: '330px' });
 		});
 		$('#q').blur(function() {
-			$(this).val('').animate({ width: '90px' });
+			$(this)/*.val('')*/.animate({ width: '90px' });
 		});
 		$('form#search').submit(function(event) {
 			event.preventDefault();
