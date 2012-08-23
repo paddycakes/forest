@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
-import forest.event.Event;
+import forest.event.LogEvent;
 
 
 public class SerializingEventsListStoreTests {
@@ -27,12 +27,12 @@ public class SerializingEventsListStoreTests {
 	
 	@Test
 	public void allEventsIteratesOverAllEventsInTheOrderTheyWereAdded() {
-		Event first = new Event("One");
-		Event second = new Event("Two");
+		LogEvent first = new LogEvent("One");
+		LogEvent second = new LogEvent("Two");
 		store.put(first);
 		store.put(second);
 		
-		Iterator<Event> events = allEvents();
+		Iterator<LogEvent> events = allEvents();
 		assertEquals(first, events.next());
 		assertEquals(second, events.next());
 		assertFalse(events.hasNext());
@@ -40,12 +40,12 @@ public class SerializingEventsListStoreTests {
 	
 	@Test
 	public void queringEventStoreByParameterValueIteratesOverMatchingEventsInOrderAdded() {
-		store.put(new Event("Biffed $thingyId", 503));
-		store.put(new Event("Stonked $thingyId", 301));
-		store.put(new Event("Bazooed $thingyId", 503));
-		store.put(new Event("Squinked $thingyId", 4));
+		store.put(new LogEvent("Biffed $thingyId", 503));
+		store.put(new LogEvent("Stonked $thingyId", 301));
+		store.put(new LogEvent("Bazooed $thingyId", 503));
+		store.put(new LogEvent("Squinked $thingyId", 4));
 		
-		Iterator<Event> events = store.events(propertyEquals("thingyId", 503)).iterator();
+		Iterator<LogEvent> events = store.events(propertyEquals("thingyId", 503)).iterator();
 		assertEquals("Biffed 503", events.next().getMessage());
 		assertEquals("Bazooed 503", events.next().getMessage());
 		assertFalse(events.hasNext());
@@ -53,7 +53,7 @@ public class SerializingEventsListStoreTests {
 	
 
 
-	private Iterator<Event> allEvents() {
+	private Iterator<LogEvent> allEvents() {
 		return store.events(between(start.minusMinutes(10), start.plusMinutes(10))).iterator();
 	}
 

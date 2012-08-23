@@ -8,6 +8,9 @@ import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 
 import forest.log.EventLogger;
+import forest.log.LogEventStorageHandler;
+import forest.log.Logger;
+import forest.log4j.Log4JFileWriterHandler;
 import forest.storage.EventStore;
 import forest.storage.SerializingEventsListStore;
 
@@ -33,8 +36,10 @@ public class WebConsole {
 
 	private static EventStore getEventStore(WebConsoleOptions options) {
 		SerializingEventsListStore eventStore = new SerializingEventsListStore();
-		final EventLogger logger = new EventLogger(EventLogger.class.getName(), eventStore);
-		Executors.newFixedThreadPool(3).submit(new Runnable() {
+		final Logger logger = new EventLogger("My Log",
+				new LogEventStorageHandler(eventStore),
+				new Log4JFileWriterHandler());
+		Executors.newFixedThreadPool(1).submit(new Runnable() {
 			@Override
 			public void run() {
 				int i = 1;

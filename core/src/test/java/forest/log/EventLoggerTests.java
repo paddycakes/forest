@@ -23,7 +23,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import forest.event.Event;
+import forest.event.LogEvent;
 import forest.storage.EventStore;
 import forest.storage.SerializingEventsListStore;
 
@@ -38,7 +38,7 @@ public class EventLoggerTests {
 	@Before
 	public void setUp() {
 		store = new SerializingEventsListStore();
-		log = new EventLogger(name, store);
+		log = new LogEventStorageHandler(name, store);
 	}
 	
 	@After
@@ -51,13 +51,13 @@ public class EventLoggerTests {
 		log.info("One");
 		log.info("Two");
 		
-		Iterator<Event> events = allEvents();
+		Iterator<LogEvent> events = allEvents();
 		assertEquals("One", events.next().getMessage());
 		assertEquals("Two", events.next().getMessage());
 		assertFalse(events.hasNext());
 	}
 
-	private Iterator<Event> allEvents() {
+	private Iterator<LogEvent> allEvents() {
 		return store.events(between(start.minusMinutes(10), start.plusMinutes(10))).iterator();
 	}
 	
@@ -73,7 +73,7 @@ public class EventLoggerTests {
 		log.info("Biffed $thingyId", 503);
 		log.info("Bazooed $widget", "one");
 		
-		Iterator<Event> events = allEvents();
+		Iterator<LogEvent> events = allEvents();
 		assertEquals(503, events.next().getParameter("thingyId"));
 		assertEquals("one", events.next().getParameter("widget"));
 	}
@@ -82,7 +82,7 @@ public class EventLoggerTests {
 	public void logEventReturnsNullForUnknownParameter() {
 		log.info("Biffed $thingyId", 503);
 		
-		Iterator<Event> events = allEvents();
+		Iterator<LogEvent> events = allEvents();
 		assertNull(events.next().getParameter("unknown"));
 	}
 	
@@ -124,7 +124,7 @@ public class EventLoggerTests {
 		log.error("Error");
 		log.fatal("Fatal");
 		
-		Iterator<Event> events = allEvents();
+		Iterator<LogEvent> events = allEvents();
 		assertNextEventIs(DEBUG, "Debug", events);
 		assertNextEventIs(INFO, "Info", events);
 		assertNextEventIs(WARN, "Warn", events);
@@ -132,8 +132,8 @@ public class EventLoggerTests {
 		assertNextEventIs(FATAL, "Fatal", events);
 	}
 
-	private void assertNextEventIs(LogLevel level, String message, Iterator<Event> events) {
-		Event event = events.next();
+	private void assertNextEventIs(LogLevel level, String message, Iterator<LogEvent> events) {
+		LogEvent event = events.next();
 		assertEquals(message, event.getMessage());
 		assertEquals(level, event.getParameter(LOG_LEVEL));
 	}

@@ -1,6 +1,6 @@
 package forest.webconsole;
 
-import static forest.log4j.Log4JEventWriter.buildLog4jEvent;
+import static forest.log4j.Log4JFileWriterHandler.buildLog4jEvent;
 import static java.lang.String.format;
 import static org.jboss.netty.buffer.ChannelBuffers.copiedBuffer;
 import static org.jboss.netty.channel.ChannelFutureListener.CLOSE;
@@ -40,7 +40,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.jboss.netty.handler.codec.http.QueryStringDecoder;
 
-import forest.event.Event;
+import forest.event.LogEvent;
 import forest.query.Query;
 import forest.query.QueryParser;
 import forest.storage.EventStore;
@@ -77,7 +77,7 @@ public class ForestRequestHandler extends SimpleChannelUpstreamHandler {
 		if (path.startsWith("/data")) {
 			PatternLayout layout = new PatternLayout(session.getPattern());
 			StringBuilder content = new StringBuilder();
-			for (Event event : eventStore.events(parseQuery(paramQ(queryParams)))) {
+			for (LogEvent event : eventStore.events(parseQuery(paramQ(queryParams)))) {
 				content.append("<li>").append(layout.format(buildLog4jEvent(event))).append("</li>");
 			}
 			writeResponse(session, OK, e, content, TEXT_CONTENT_TYPE);

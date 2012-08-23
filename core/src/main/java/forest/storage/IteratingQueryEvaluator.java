@@ -14,7 +14,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterators;
 
-import forest.event.Event;
+import forest.event.LogEvent;
 import forest.query.AndQuery;
 import forest.query.CompositeQuery;
 import forest.query.Operator;
@@ -24,28 +24,28 @@ import forest.query.Query;
 import forest.query.QueryVisitor;
 import forest.query.TimeQuery;
 
-public class IteratingQueryEvaluator implements QueryVisitor, Iterable<Event> {
+public class IteratingQueryEvaluator implements QueryVisitor, Iterable<LogEvent> {
 	
 	private static final Logger log = LogManager.getLogger(IteratingQueryEvaluator.class);
 	
-	private final Iterator<Event> allEvents;
-	private final Stack<Predicate<Event>> filters = new Stack<Predicate<Event>>();
+	private final Iterator<LogEvent> allEvents;
+	private final Stack<Predicate<LogEvent>> filters = new Stack<Predicate<LogEvent>>();
 
-	public IteratingQueryEvaluator(Iterator<Event> allEvents) {
+	public IteratingQueryEvaluator(Iterator<LogEvent> allEvents) {
 		this.allEvents = allEvents;
 	}
 	
 	@Override
-	public Iterator<Event> iterator() {
+	public Iterator<LogEvent> iterator() {
 		checkForSingleFilter();
 		return Iterators.filter(allEvents, filters.pop());
 	}
 	
 	@Override
 	public void visit(final ParameterQuery query) {
-		filters.push(new Predicate<Event>() {
+		filters.push(new Predicate<LogEvent>() {
 			@Override
-			public boolean apply(Event event) {
+			public boolean apply(LogEvent event) {
 				Object value = event.getParameter(query.getParamName());
 				if (value == null) return false;
 				if (query.getOperator() == Operator.EQUAL) {
@@ -73,9 +73,9 @@ public class IteratingQueryEvaluator implements QueryVisitor, Iterable<Event> {
 	
 	@Override
 	public void visit(final TimeQuery query) {
-		filters.push(new Predicate<Event>() {
+		filters.push(new Predicate<LogEvent>() {
 			@Override
-			public boolean apply(Event event) {
+			public boolean apply(LogEvent event) {
 				switch (query.getOperator()) {
 				case LESS_THAN:
 					return event.getTime().isBefore(query.getTime());
@@ -106,18 +106,18 @@ public class IteratingQueryEvaluator implements QueryVisitor, Iterable<Event> {
 	
 	@Override
 	public void visit(AndQuery query) {
-		Predicate<Event> andPredicate = Predicates.and(underlyingFilters(query));
+		Predicate<LogEvent> andPredicate = Predicates.and(underlyingFilters(query));
 		filters.push(andPredicate);
 	}
 	
 	@Override
 	public void visit(OrQuery query) {
-		Predicate<Event> orPredicate = Predicates.or(underlyingFilters(query));
+		Predicate<LogEvent> orPredicate = Predicates.or(underlyingFilters(query));
 		filters.push(orPredicate);
 	}
 
-	private List<Predicate<Event>> underlyingFilters(CompositeQuery query) {
-		List<Predicate<Event>> underlyingFilters = new ArrayList<Predicate<Event>>();
+	private List<Predicate<LogEvent>> underlyingFilters(CompositeQuery query) {
+		List<Predicate<LogEvent>> underlyingFilters = new ArrayList<Predicate<LogEvent>>();
 		for (Query subQuery : query.getUnderlying()) {
 			subQuery.accept(this);
 			underlyingFilters.add(filters.pop());

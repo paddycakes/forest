@@ -1,9 +1,10 @@
 package forest.storage;
 
-import forest.event.Event;
+import forest.event.LogEvent;
 
+// TODO: Deprecate for LogEventHandler
 public interface LogEventListener {
 	
-	void newLogEvent(Event e);
+	void newLogEvent(LogEvent e);
 
 }

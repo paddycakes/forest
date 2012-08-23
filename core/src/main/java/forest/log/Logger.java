@@ -1,7 +1,11 @@
 package forest.log;
 
+import forest.event.LogEvent;
+
 
 public interface Logger {
+	
+	void log(LogEvent event);
 	
 	void debug(String message, Object... parameters);
 	

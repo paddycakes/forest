@@ -1,13 +1,13 @@
 package forest.storage;
 
-import forest.event.Event;
+import forest.event.LogEvent;
 import forest.query.Query;
 
 public interface EventStore {
 	
-	void put(Event event);
+	void put(LogEvent event);
 	
-	Iterable<Event> events(Query query);
+	Iterable<LogEvent> events(Query query);
 	
 	void addEventListener(LogEventListener listener);
 	

@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import org.joda.time.DateTime;
 
-public class Event implements Serializable {
+public class LogEvent implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 
@@ -18,10 +18,10 @@ public class Event implements Serializable {
 	private String message;
 	private Map<String, Object> parameters;
 	
-	public Event() {
+	public LogEvent() {
 	}
 	
-	public Event(String message, Object[] parameters, Map<String, Object> additionalParameters) {
+	public LogEvent(String message, Object[] parameters, Map<String, Object> additionalParameters) {
 		this.parameters = additionalParameters != null 
 				? new HashMap<String, Object>(additionalParameters) 
 				: new HashMap<String, Object>();
@@ -38,7 +38,7 @@ public class Event implements Serializable {
 		this.message = substitutedMessage;
 	}
 
-	public Event(String message, Object... parameters) {
+	public LogEvent(String message, Object... parameters) {
 		this(message, parameters, null);
 	}
 

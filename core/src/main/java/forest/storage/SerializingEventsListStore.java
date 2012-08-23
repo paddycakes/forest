@@ -12,14 +12,14 @@ import java.util.List;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
-import forest.event.Event;
+import forest.event.LogEvent;
 import forest.query.Query;
 
 public class SerializingEventsListStore implements EventStore {
 	
 	private static final Logger log = LogManager.getLogger(SerializingEventsListStore.class);
 	
-	private List<Event> events = synchronizedList(new ArrayList<Event>());
+	private List<LogEvent> events = synchronizedList(new ArrayList<LogEvent>());
 	private final File file;
 	private Collection<LogEventListener> eventListeners = synchronizedList(new ArrayList<LogEventListener>());
 	
@@ -32,25 +32,25 @@ public class SerializingEventsListStore implements EventStore {
 	}
 
 	@Override
-	public void put(Event event) {
+	public void put(LogEvent event) {
 		events.add(event);
 		notifyEventListeners(event);
 //		save();
 	}
 
-	private Iterator<Event> allEvents() {
+	private Iterator<LogEvent> allEvents() {
 		synchronized (events) {
-			return unmodifiableList(new ArrayList<Event>(events)).iterator();
+			return unmodifiableList(new ArrayList<LogEvent>(events)).iterator();
 		}
 	}
 
 	@Override
-	public Iterable<Event> events(Query query) {
+	public Iterable<LogEvent> events(Query query) {
 		if (query == null) {
 			// TODO: Replace with a required 'all' query...?
-			return new Iterable<Event>() {
+			return new Iterable<LogEvent>() {
 				@Override
-				public Iterator<Event> iterator() {
+				public Iterator<LogEvent> iterator() {
 					return allEvents();
 				}
 			};
@@ -68,7 +68,7 @@ public class SerializingEventsListStore implements EventStore {
 	
 	/* --- Private --- */
 
-	private void notifyEventListeners(Event event) {
+	private void notifyEventListeners(LogEvent event) {
 		for (LogEventListener listener : eventListeners) {
 			listener.newLogEvent(event);
 		}

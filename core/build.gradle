@@ -4,5 +4,6 @@ repositories {
 }
 
 dependencies {
-	compile 'com.google.guava:guava:11.0'
+	compile 'com.google.guava:guava:11.0',
+		'com.googlecode.disruptor:disruptor:2.10.1'
 }

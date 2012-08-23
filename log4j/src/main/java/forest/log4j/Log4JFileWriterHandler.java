@@ -11,16 +11,16 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.spi.ThrowableInformation;
 
-import forest.event.Event;
-import forest.event.EventWriter;
+import forest.event.LogEvent;
+import forest.event.LogEventHandler;
 import forest.log.LogLevel;
 
-public class Log4JEventWriter implements EventWriter {
+public class Log4JFileWriterHandler implements LogEventHandler {
 	
 	private static final String FQCN = Category.class.getName();
 
 	@Override
-	public void write(Event event) {
+	public void handle(LogEvent event) {
 		Logger logger = Logger.getLogger(event.getParameter(LOG_NAME).toString());
 		// ? logger.setLevel(log4JLevel); // Ensure log level matches? Reset after?
 		Level log4JLevel = getLevel(event);
@@ -33,7 +33,7 @@ public class Log4JEventWriter implements EventWriter {
 	    }
 	}
 
-	public static LoggingEvent buildLog4jEvent(Event event) {
+	public static LoggingEvent buildLog4jEvent(LogEvent event) {
 		Logger logger = Logger.getLogger(event.getParameter(LOG_NAME).toString());
 		Level log4JLevel = getLevel(event);
 		Throwable throwable = (Throwable) event.getParameter(THROWABLE);
@@ -42,7 +42,7 @@ public class Log4JEventWriter implements EventWriter {
 				new ThrowableInformation(throwable, logger), null, null, null);
 	}
 
-	private static Level getLevel(Event event) {
+	private static Level getLevel(LogEvent event) {
 		LogLevel level = (LogLevel) event.getParameter(LOG_LEVEL);
 		switch (level) {
 		case DEBUG: return Level.DEBUG;
