@@ -4,6 +4,9 @@ build
 .gradle
 out
 tmp
+.classpath
+.project
+.settings
 **/.classpath
 **/.project
 **/.settings
